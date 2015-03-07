@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RealEstateInspector.XForms.MainPage"
+  BindingContext="{Binding Main, Source={StaticResource Locator}}"
+    
+  >
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+    <RowDefinition />
+    </Grid.RowDefinitions>
+    <Button Text="Authenticate" Clicked="AuthenticateClick"/>
+  <ListView Grid.Row="1" ItemsSource="{Binding Properties}">
+    <ListView.ItemTemplate>
+      <DataTemplate>
+        <ViewCell>
+          <ViewCell.View>
+            <Label Text="{Binding Address}" />
+          </ViewCell.View>
+        </ViewCell>
+      </DataTemplate>
+    </ListView.ItemTemplate>
+  </ListView>
+
+</Grid>
+</ContentPage>

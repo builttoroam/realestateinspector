@@ -1,0 +1,55 @@
+﻿<Page x:Class="RealEstateInspector.Desktop.Pages.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+    Title="MainPage"
+    DataContext="{Binding Main, Source={StaticResource Locator}}">
+
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate
+                x:Key="PropertyItemTemplate">
+                <TextBlock
+                    Text="{Binding Address}"
+                    FontSize="30"
+                    Foreground="WhiteSmoke" />
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Button
+                Content="Authenticate"
+                Click="AuthenticateClick" />
+            <Button
+                Content="Add Property"
+                Click="AddPropertyClick" />
+
+            <Button
+                Content="Generate Report"
+                Click="GenerateReportClick" />
+            <Button Content="Navigate" Click="NavigateClick"/> 
+            <TextBlock
+                Text="{Binding Progress}" />
+            <TextBox
+                Text="{Binding FileText}" />
+            <Button
+                Content="Write"
+                Click="WriteClick" />
+            <Button
+                Content="Read"
+                Click="ReadClick" />
+        </StackPanel>
+        <ListView
+            ItemTemplate="{StaticResource PropertyItemTemplate}"
+            Grid.Row="1"
+            ItemsSource="{Binding Properties}" />
+    </Grid>
+
+</Page>

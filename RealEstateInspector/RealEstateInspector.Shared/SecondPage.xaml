@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="RealEstateInspector.SecondPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RealEstateInspector"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:client="using:RealEstateInspector.Shared.Client"
+    mc:Ignorable="d"
+    DataContext="{Binding Second,Source={StaticResource Locator}}">
+    <Page.Resources>
+        <client:PropertyFormDisplayConverter
+            x:Key="PropertyFormDisplayConverter" />
+        <DataTemplate
+            x:Key="TextBoxItemTemplate">
+            <StackPanel>
+                <TextBlock
+                    TextWrapping="Wrap"
+                    Text="{Binding Name}"
+                    FontSize="21.333" />
+                <TextBox
+                    Text="{Binding FormValue, Mode=TwoWay}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate
+            x:Key="ComboBoxItemTemplate">
+            <StackPanel>
+                <TextBlock
+                    TextWrapping="Wrap"
+                    Text="{Binding Name}"
+                    FontSize="21.333" />
+                <ComboBox
+                    SelectedItem="{Binding FormValue, Mode=TwoWay}" 
+                    ItemsSource="{Binding FormSelectionValues}"
+                    DisplayMemberPath="Display"
+                    />
+            </StackPanel>
+        </DataTemplate>
+        <local:FormSelector TextBoxTemplate="{StaticResource TextBoxItemTemplate}"
+                            ComboBoxTemplate="{StaticResource ComboBoxItemTemplate}" x:Key="FormSelector" />
+    </Page.Resources>
+
+    <Grid
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        d:DataContext="{Binding Source={StaticResource SecondPageSampleData}}">
+        <ListView
+            ItemsSource="{Binding CurrentProperty, Converter={StaticResource PropertyFormDisplayConverter}}"
+            ItemTemplateSelector="{StaticResource FormSelector}"/>
+            <!--ItemTemplate="{StaticResource PropertyItemTemplate}" />-->
+
+    </Grid>
+</Page>
