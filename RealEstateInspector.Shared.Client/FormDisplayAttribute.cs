@@ -12,6 +12,7 @@ using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Core;
 using RealEstateInspector.Core.ViewModels;
 using System.Globalization;
+using BuiltToRoam.Mobile;
 #if DROID
 using Xamarin.Forms;
 #elif !NETFX_CORE
@@ -154,7 +155,7 @@ namespace RealEstateInspector.Shared.Client
 
         public PropertyInfo PropertyInfo { get; set; }
 
-        public object FormValue
+        public virtual object FormValue
         {
             get
             {
@@ -184,6 +185,23 @@ namespace RealEstateInspector.Shared.Client
             {
                 formValues = value;
                 OnPropertyChanged();
+                OnPropertyChanged(() => FormValue);
+            }
+        }
+
+        public override object FormValue
+        {
+            get
+            {
+                if (FormSelectionValues == null) return null;
+                var fs = Form as IFormSelector;
+                if(fs == null)return  base.FormValue;
+                return fs.FormSelection(FormSelectionValues,base.FormValue);
+            }
+            set
+            {
+                var fs = Form as IFormSelector;
+                base.FormValue = fs  != null ? fs.FormValue(value) : value;
             }
         }
 
@@ -252,18 +270,41 @@ namespace RealEstateInspector.Shared.Client
 
         public async Task<IFormWrappedEntity[]> BuildSelection()
         {
-            var dataService = ServiceLocator.Current.GetInstance<IDataService>();
+            var dataService = ServiceLocator.Current.GetInstance<IMobileDataService>();
             var dataTable = dataService.MobileService.GetSyncTable<TSelection>();
             var selection = await dataTable.ToListAsync();
             return (from s in selection
                     select new FormValueWrapper<TSelection, TValue> { Entity = s, Form = this }).OfType < IFormWrappedEntity>().ToArray();
         }
+
+        public object FormValue(object entity)
+        {
+            var tentity = entity as FormValueWrapper<TSelection, TValue>;
+            if (tentity == null) return null;
+            var val= Value(tentity.Entity);
+            return val;
+        }
+
+        public object FormSelection(IFormWrappedEntity[] items, object formValue)
+        {
+            if (formValue == null) return null;
+            var selection = (from item in items.OfType<FormValueWrapper<TSelection, TValue>>()
+                let val = Value(item.Entity)
+                where val!=null && val.Equals( (TValue)formValue)
+                select item).FirstOrDefault();
+            return selection;
+        }
+
     }
 
     public interface IFormSelector
 
     {
         Task<IFormWrappedEntity[]> BuildSelection();
+
+        object FormValue(object entity);
+
+        object FormSelection(IFormWrappedEntity[] items, object formValue);
     }
 
     public class FormElement

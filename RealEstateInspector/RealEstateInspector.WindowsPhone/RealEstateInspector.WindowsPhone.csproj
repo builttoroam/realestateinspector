@@ -212,12 +212,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\SQLitePCL.3.8.7.2\lib\wpa81\SQLitePCL.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.28\lib\wpa81\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.28\lib\wpa81\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
     <Reference Include="System.Spatial">
       <HintPath>..\..\packages\System.Spatial.5.6.2\lib\portable-net40+sl5+wp8+win8+wpa\System.Spatial.dll</HintPath>
       <Private>True</Private>
@@ -231,6 +225,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BuiltToRoam.Infrastructure\BuiltToRoam.Infrastructure.csproj">
+      <Project>{31ADBABA-8788-4471-B19F-5DEE07F8F54A}</Project>
+      <Name>BuiltToRoam.Infrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BuiltToRoam.Synchronization\BuiltToRoam.Synchronization.csproj">
       <Project>{cc098e36-dba0-45a7-bf77-b8dd282937f6}</Project>
       <Name>BuiltToRoam.Synchronization</Name>
@@ -248,7 +246,7 @@
     <SDKReference Include="Microsoft.VCLibs, version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WP81, Version=3.8.8.1">
+    <SDKReference Include="SQLite.WP81, Version=3.8.8.3">
       <Name>SQLite for Windows Phone 8.1</Name>
     </SDKReference>
   </ItemGroup>

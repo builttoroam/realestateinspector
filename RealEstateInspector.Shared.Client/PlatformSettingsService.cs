@@ -7,6 +7,7 @@ using Windows.Storage;
 using System.IO.IsolatedStorage;
 #endif
 using System.Threading.Tasks;
+using BuiltToRoam;
 using Newtonsoft.Json;
 using PCLStorage;
 using RealEstateInspector.Core;

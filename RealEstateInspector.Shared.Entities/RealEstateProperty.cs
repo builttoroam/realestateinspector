@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BuiltToRoam.Mobile;
+
 //#if SERVICE
 //using realestateinspectorService.DataObjects;
 //#endif

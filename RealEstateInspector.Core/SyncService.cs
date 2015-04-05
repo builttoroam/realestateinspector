@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BuiltToRoam;
+using BuiltToRoam.Mobile;
 using BuiltToRoam.Synchronization;
 using RealEstateInspector.Core.ViewModels;
 using RealEstateInspector.Shared.Entities;
@@ -23,11 +24,11 @@ namespace RealEstateInspector.Core
 
         public event EventHandler<DualParameterEventArgs<double,string>> Progress; 
 
-        public IDataService DataService { get; set; }
+        public IMobileDataService DataService { get; set; }
 
         private ISynchronizationContext<SyncStages> SynchronizationManager { get; set; }
 
-        public SyncService(IDataService dataService)
+        public SyncService(IMobileDataService dataService)
         {
             DataService = dataService;
             SynchronizationManager = new SynchronizationContext<SyncStages>();

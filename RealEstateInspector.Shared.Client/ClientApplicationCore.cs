@@ -2,17 +2,29 @@
 #if SILVERLIGHT
 using System.IO.IsolatedStorage;
 #endif
+
+#if SILVERLIGHT || DROID || __IOS__
+using RealEstateInspector.XForms;
+#endif
 using System.Windows;
 using Autofac;
+using BuiltToRoam;
+#if !WINDOWS_UAP
+using BuiltToRoam.Communication;
+#endif
+using BuiltToRoam.Mobile;
+using BuiltToRoam.Navigation;
 using MetroLog;
 using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Core;
 using RealEstateInspector.Core.ViewModels;
-using RealEstateInspector.XForms;
 
 //using FileAccess = System.IO.FileAccess;
 #if DESKTOP
 using RealEstateInspector.Desktop.Pages;
+    #elif WINDOWS_UAP
+using RealEstateInspector.Universal;
+
 #endif
 
 namespace RealEstateInspector.Shared.Client
@@ -37,9 +49,13 @@ namespace RealEstateInspector.Shared.Client
         {
             CoreApplication.Startup(builder =>
             {
+
                 builder.RegisterType<PlatformSettingsService>().SingleInstance().As<ISettingsService>();
 
+#if !WINDOWS_UAP
                 builder.RegisterType<SignalRFactory>().As<ISignalR>();
+#endif
+
 #if NETFX_CORE
                 builder.RegisterType<UniversalUIContext>().As<IUIContext>();
                 builder.RegisterType<WindowsPlatformNavigationService>().SingleInstance().As<INavigateService>();

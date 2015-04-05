@@ -43,10 +43,14 @@
     <Grid
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         d:DataContext="{Binding Source={StaticResource SecondPageSampleData}}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <ListView
             ItemsSource="{Binding CurrentProperty, Converter={StaticResource PropertyFormDisplayConverter}}"
             ItemTemplateSelector="{StaticResource FormSelector}"/>
             <!--ItemTemplate="{StaticResource PropertyItemTemplate}" />-->
-
+<Button Content="Save" Grid.Row="1" Click="SaveClick"></Button>
     </Grid>
 </Page>

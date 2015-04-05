@@ -131,8 +131,9 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage">
-      <HintPath>..\packages\WindowsAzure.Storage.3.1.0.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=4.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WindowsAzure.Storage.4.3.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel" />
@@ -294,6 +295,16 @@
     <EmbeddedResource Include="Migrations\201502260615263_Added proeprty type entity.resx">
       <DependentUpon>201502260615263_Added proeprty type entity.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuiltToRoam.General\BuiltToRoam.General.csproj">
+      <Project>{fd17ad8e-6a3f-4c1d-a7cb-dcbf6a125897}</Project>
+      <Name>BuiltToRoam.General</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuiltToRoam.Mobile.Server\BuiltToRoam.Mobile.Server.csproj">
+      <Project>{1856c790-4c71-44fc-a271-6a5cdd9b22ce}</Project>
+      <Name>BuiltToRoam.Mobile.Server</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\RealEstateInspector.Shared.Entities\RealEstateInspector.Shared.Entities.projitems" Label="Shared" Condition="Exists('..\RealEstateInspector.Shared.Entities\RealEstateInspector.Shared.Entities.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

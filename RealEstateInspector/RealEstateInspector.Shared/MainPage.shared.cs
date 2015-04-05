@@ -5,7 +5,6 @@ using Windows.ApplicationModel.Background;
 using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.WindowsAzure.Storage.Blob;
 using RealEstateInspector.Background;
@@ -40,7 +39,8 @@ namespace RealEstateInspector
         {
 
             var token = await AuthenticationHelper.Authenticate();
-            await CurrentViewModel.DataService.Initialize(token);
+            await CurrentViewModel.DataService.Initialize();
+            await CurrentViewModel.SyncService.DataService.LoginAsync(token);
             await CurrentViewModel.LoadPropertyData();
         }
 
@@ -77,14 +77,6 @@ namespace RealEstateInspector
         private void NavigateClick(object sender, RoutedEventArgs e)
         {
             CurrentViewModel.GoToSecondPage();
-        }
-    }
-
-    public class WindowsPlatformNavigationService : CoreNavigateService<Page>
-    {
-        protected override void NavigateToView(Type viewType)
-        {
-            (Window.Current.Content as Frame).Navigate(viewType);
         }
     }
 

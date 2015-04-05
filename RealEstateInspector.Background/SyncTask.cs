@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Windows.ApplicationModel.Background;
+using BuiltToRoam;
+using BuiltToRoam.Mobile;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Core;
@@ -48,22 +50,27 @@ namespace RealEstateInspector.Background
                 // of work in the background task and return immediately.
                 var cost = BackgroundWorkCost.CurrentBackgroundWorkCost;
 
-                var authContext = new AuthenticationContext(Configuration.Current.ADAuthority);
+                var cm = ServiceLocator.Current.GetInstance<IConfigurationManager<BuildConfigurationType, AppConfiguration>>();
+                var config = cm.Current;
+
+                var authContext = new AuthenticationContext(config.ADAuthority);
                 if (authContext.TokenCache.ReadItems().Count() > 0)
                 {
                     authContext = new AuthenticationContext(authContext.TokenCache.ReadItems().First().Authority);
                 }
 
+
                 var authResult =
                     await
-                        authContext.AcquireTokenSilentAsync(Configuration.Current.MobileServiceAppIdUri,
-                        Configuration.Current.ADNativeClientApplicationClientId);
+                        authContext.AcquireTokenSilentAsync(config.MobileServiceAppIdUri,
+                        config.ADNativeClientApplicationClientId);
                 if (authResult != null && !string.IsNullOrWhiteSpace(authResult.AccessToken))
                 {
-                    var dataService = ServiceLocator.Current.GetInstance<IDataService>();
+                    //var dataService = ServiceLocator.Current.GetInstance<IDataService>();
                     SyncService = ServiceLocator.Current.GetInstance<ISyncService>();
-
-                    await dataService.Initialize(authResult.AccessToken);
+                    
+                    await SyncService.DataService.Initialize();
+                    await SyncService.DataService.LoginAsync(authResult.AccessToken);
 
 
                     if (cost == BackgroundWorkCostValue.High)

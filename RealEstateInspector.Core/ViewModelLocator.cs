@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using BuiltToRoam;
+using BuiltToRoam.Mobile;
+using BuiltToRoam.Navigation;
+using BuiltToRoam.ViewModels;
 using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Core.ViewModels;
 
@@ -61,63 +65,16 @@ namespace RealEstateInspector.Core
             {
                 baseVM.SettingsService = SettingsService;
                 baseVM.DataService = DataService;
-                baseVM.SyncService = SyncService;
                 baseVM.NavigateService = NavigateService;
+            }
+            var baseSyncVM = existing as ISyncViewModel;
+            if (baseSyncVM != null)
+            {
+                baseSyncVM.SyncService = SyncService;
             }
 
             return (T)existing;
         }
     }
 
-    public interface INavigateService
-    {
-        void Navigate<TViewModel>() where TViewModel : IDataViewModel;
-    }
-
-    public interface INativeNavigateService<TView> : INavigateService
-        where TView : class,new()
-    {
-        void Register<TViewModel, TViewType>() where TViewType : TView;
-    }
-
-    public abstract class CoreNavigateService<TView> : INativeNavigateService<TView> where TView : class, new()
-    {
-        private readonly IDictionary<Type, Type> viewDictionary = new Dictionary<Type, Type>();
-
-        protected Type ViewType<TViewModel>()
-        {
-            Type viewType = null;
-            viewDictionary.TryGetValue(typeof(TViewModel), out viewType);
-            return viewType;
-        }
-
-        public void Register<TViewModel, TViewType>() where TViewType : TView
-        {
-            viewDictionary[typeof(TViewModel)] = typeof(TViewType);
-        }
-
-        public void Navigate<TViewModel>() where TViewModel : IDataViewModel
-        {
-            var navType = ViewType<TViewModel>();
-            NavigateToView(navType);
-        }
-
-        protected abstract void NavigateToView(Type viewType);
-    }
-
-    //public interface IViewModelLocator
-    //{
-    //}
-
-    //public static class LocatorFactor
-    //{
-    //    public static IViewModelLocator Locator
-    //    {
-    //        get
-    //        {
-    //            var locator = ServiceLocator.Current.GetInstance<IViewModelLocator>();
-    //            return locator;
-    //        }
-    //    }
-    //}
 }

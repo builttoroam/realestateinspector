@@ -16,7 +16,6 @@
     <Import_RootNamespace>RealEstateInspector.Shared.Entities</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)BaseEntityData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LongRunningFeedbackHub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RealEstateProperty.cs" />

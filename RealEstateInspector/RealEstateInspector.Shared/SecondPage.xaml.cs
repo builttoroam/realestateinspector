@@ -34,6 +34,11 @@ namespace RealEstateInspector
         {
             this.InitializeComponent();
         }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+            (DataContext as SecondViewModel).Save();
+        }
     }
 
     public class FormSelector : DataTemplateSelector

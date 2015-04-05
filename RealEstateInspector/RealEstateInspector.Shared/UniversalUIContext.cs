@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using BuiltToRoam;
 using RealEstateInspector.Core.ViewModels;
 
 namespace RealEstateInspector
@@ -11,7 +12,9 @@ namespace RealEstateInspector
     {
         public async Task RunOnUIThreadAsync(Func<Task> action)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,async  () => await action());
+            var awaiter = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await action());
+            awaiter.GetResults();
         }
+
     }
 }

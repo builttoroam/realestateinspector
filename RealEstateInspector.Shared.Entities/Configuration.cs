@@ -2,116 +2,137 @@
 //#define DEBUGLOCAL
 #endif
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using BuiltToRoam;
+using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Shared.Entities;
 
 namespace RealEstateInspector
 {
-    public class Configuration
+    public class AppConfiguration : BaseConfiguration
     {
-        static Configuration()
+
+        public AppConfiguration(IDictionary<Expression<Func<string>>, string> initializers) : base(initializers)
         {
+
+        }
+
+        public string ADTenant => Value();
+
+        public string ADAuthority => SharedConstants.ADAuthorityRoot + ADTenant;
+
+        public string ADNativeClientApplicationClientId => Value();
+
+        public string ADRedirectUri => Value();
+
+
+        public string MobileServiceRootUri => Value();
+        public string MobileServiceAppIdUri => Value();
+
+        public string MobileServiceApiKey => Value();
+
+
+
+
+    }
+
+    public enum BuildConfigurationType
+    {
+        LocalDevelopment,
+        Development,
+        Test,
+        Production
+    }
+
+    public static class ConfigurationInitializer
+    {
+        public static void Initialize()
+        {
+            var cm =
+                ServiceLocator.Current.GetInstance<IConfigurationManager<BuildConfigurationType, AppConfiguration>>();
+            AppConfiguration x = null;
+            cm.Populate(new Dictionary<BuildConfigurationType, AppConfiguration>
+            {
+                {
+                    BuildConfigurationType.LocalDevelopment, new AppConfiguration
+                        (
+                        new Dictionary<Expression<Func<string>>, string>
+                        {
+                            {() => x.ADTenant, "realestateinspector.onmicrosoft.com"},
+                            {() => x.ADNativeClientApplicationClientId, "a5a10ee9-f871-4bde-997f-3f1c323fefa5"},
+                            {() => x.ADRedirectUri, "http://builttoroam.com"},
+                            {() => x.MobileServiceRootUri, "http://localhost:51539/"},
+                            {() => x.MobileServiceAppIdUri, "https://realestateinspector.azure-mobile.net/login/aad"},
+                            {() => x.MobileServiceApiKey, "wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"}
+                        }
+                        )
+                },
+                {
+                    BuildConfigurationType.Development, new AppConfiguration(
+                        new Dictionary<Expression<Func<string>>, string>
+                        {
+                            {() => x.ADTenant, "realestateinspector.onmicrosoft.com"},
+                            {() => x.ADNativeClientApplicationClientId, "a5a10ee9-f871-4bde-997f-3f1c323fefa5"},
+                            {() => x.ADRedirectUri, "http://builttoroam.com"},
+                            {() => x.MobileServiceRootUri, "https://realestateinspector.azure-mobile.net/"},
+                            {() => x.MobileServiceAppIdUri, "https://realestateinspector.azure-mobile.net/login/aad"},
+                            {() => x.MobileServiceApiKey, "wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"}
+                        }
+                        )
+                },
+                {
+                    BuildConfigurationType.Test, new AppConfiguration(
+                        new Dictionary<Expression<Func<string>>, string>
+                        {
+                            {() => x.ADTenant, "realestateinspector.onmicrosoft.com"},
+                            {() => x.ADNativeClientApplicationClientId, "a5a10ee9-f871-4bde-997f-3f1c323fefa5"},
+                            {() => x.ADRedirectUri, "http://builttoroam.com"},
+                            {() => x.MobileServiceRootUri, "https://realestateinspector.azure-mobile.net/"},
+                            {() => x.MobileServiceAppIdUri, "https://realestateinspector.azure-mobile.net/login/aad"},
+                            {() => x.MobileServiceApiKey, "wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"}
+                        }
+                        )
+                },
+                {
+                    BuildConfigurationType.Production, new AppConfiguration(
+                        new Dictionary<Expression<Func<string>>, string>
+                        {
+                            {() => x.ADTenant, "realestateinspector.onmicrosoft.com"},
+                            {() => x.ADNativeClientApplicationClientId, "a5a10ee9-f871-4bde-997f-3f1c323fefa5"},
+                            {() => x.ADRedirectUri, "http://builttoroam.com"},
+                            {() => x.MobileServiceRootUri, "https://realestateinspector.azure-mobile.net/"},
+                            {() => x.MobileServiceAppIdUri, "https://realestateinspector.azure-mobile.net/login/aad"},
+                            {() => x.MobileServiceApiKey, "wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"}
+                        }
+                        )
+                }
+            });
+
+            cm.SelectConfiguration(BuildConfigurationType.Test);
 #pragma warning disable 162 // This is to allow for easy override of configuration values to debug issues
             if (false)
             {
                 Debug.WriteLine("-----------------WARNING - Default Configuration Values Overridden ------------------");
-                Current = Configurations[ConfigurationType.Production];
+                cm.SelectConfiguration(BuildConfigurationType.Production);
             }
 #pragma warning restore 162
 
 #if DEBUG
 #if DEBUGLOCAL
-            Current = Configurations[ConfigurationType.LocalDevelopment];
+                        cm.SelectConfiguration( BuildConfigurationType.LocalDevelopment);
 #else
-            Current = Configurations[ConfigurationType.Development];
+            cm.SelectConfiguration(BuildConfigurationType.Development);
 #endif
 #elif TEST
-            Current = Configurations[ConfigurationType.LocalDevelopment];
+                        cm.SelectConfiguration( BuildConfigurationType.LocalDevelopment);
 #else
-            Current = Configurations[ConfigurationType.Production];
+                        cm.SelectConfiguration( BuildConfigurationType.Production);
 #endif
+
         }
-
-        public static Configuration Current { get; set; }
-
-        public string ADTenant { get; set; }
-
-        public string ADAuthority
-        {
-            get { return SharedConstants.ADAuthorityRoot + ADTenant; }
-        }
-
-        public string ADNativeClientApplicationClientId { get; set; }
-
-        public string ADRedirectUri { get; set; }
-
-
-        public string MobileServiceRootUri { get; set; }
-        public string MobileServiceAppIdUri { get; set; }
-
-        public string MobileServiceApiKey { get; set; }
-
-        public enum ConfigurationType
-        {
-            LocalDevelopment,
-            Development,
-            Test,
-            Production
-        }
-
-        public static IDictionary<ConfigurationType, Configuration> Configurations
-        {
-            get { return configurations; }
-        }
-
-        private static readonly IDictionary<ConfigurationType, Configuration> configurations
-            = new Dictionary<ConfigurationType, Configuration>
-            {
-                {
-                    ConfigurationType.LocalDevelopment, new Configuration
-                    {
-                        ADTenant = "realestateinspector.onmicrosoft.com",
-                        ADNativeClientApplicationClientId = "a5a10ee9-f871-4bde-997f-3f1c323fefa5",
-                        ADRedirectUri = "http://builttoroam.com",
-                        MobileServiceRootUri = "http://localhost:51539/",
-                        MobileServiceAppIdUri = "https://realestateinspector.azure-mobile.net/login/aad",
-                        MobileServiceApiKey="wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"
-                    }
-                },
-                {
-                    ConfigurationType.Development, new Configuration
-                    {
-                        ADTenant = "realestateinspector.onmicrosoft.com",
-                        ADNativeClientApplicationClientId = "a5a10ee9-f871-4bde-997f-3f1c323fefa5",
-                        ADRedirectUri = "http://builttoroam.com",
-                        MobileServiceRootUri = "https://realestateinspector.azure-mobile.net/",
-                        MobileServiceAppIdUri = "https://realestateinspector.azure-mobile.net/login/aad",
-                        MobileServiceApiKey="wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"
-                    }
-                },
-                {
-                    ConfigurationType.Test, new Configuration
-                    {
-                        ADTenant = "realestateinspector.onmicrosoft.com",
-                        ADNativeClientApplicationClientId = "a5a10ee9-f871-4bde-997f-3f1c323fefa5",
-                        ADRedirectUri = "http://builttoroam.com",
-                        MobileServiceRootUri = "https://realestateinspector.azure-mobile.net/",
-                        MobileServiceAppIdUri = "https://realestateinspector.azure-mobile.net/login/aad",
-                        MobileServiceApiKey="wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"
-                    }
-                },
-                {
-                    ConfigurationType.Production, new Configuration
-                    {
-                        ADTenant = "realestateinspector.onmicrosoft.com",
-                        ADNativeClientApplicationClientId = "a5a10ee9-f871-4bde-997f-3f1c323fefa5",
-                        ADRedirectUri = "http://builttoroam.com",
-                        MobileServiceRootUri = "https://realestateinspector.azure-mobile.net/",
-                        MobileServiceAppIdUri = "https://realestateinspector.azure-mobile.net/login/aad",
-                        MobileServiceApiKey="wpxaIplpeXtknXQhqXiVlZAPYQEBcg12"
-                    }
-                }
-            };
     }
 }

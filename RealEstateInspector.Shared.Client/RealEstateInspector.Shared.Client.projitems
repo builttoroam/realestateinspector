@@ -19,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AuthenticationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClientApplicationCore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormDisplayAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LogHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MobileServiceTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NavigationService.cs" />

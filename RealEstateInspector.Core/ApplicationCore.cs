@@ -1,43 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Autofac;
-using Autofac.Extras.CommonServiceLocator;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.WindowsAzure.MobileServices;
+using BuiltToRoam;
+using BuiltToRoam.Mobile;
 using RealEstateInspector.Core;
 
 namespace RealEstateInspector.Shared.Client
 {
-    public class ApplicationCore
+    public class ApplicationCore : BaseApplicationCore
     {
-        public void Startup(Action<ContainerBuilder> dependencyBuilder)
+        protected override void BuildCoreDependencies(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
+            base.BuildCoreDependencies(builder);
 
-            builder.RegisterType<DataService>().SingleInstance().As<IDataService>();
+            builder.RegisterType<ConfigurationManager<BuildConfigurationType, AppConfiguration>>()
+                .SingleInstance()
+                .As<IConfigurationManager<BuildConfigurationType, AppConfiguration>>();
+
+
+            builder.RegisterType<DataService>().SingleInstance().As<IMobileDataService>().As<IDataService>();
             builder.RegisterType<SyncService>().SingleInstance().As<ISyncService>();
 
-            dependencyBuilder(builder);
-            // Perform registrations and build the container.
-            var container = builder.Build();
-
-            // Set the service locator to an AutofacServiceLocator.
-            var csl = new AutofacServiceLocator(container);
-            ServiceLocator.SetLocatorProvider(() => csl);
         }
-    }
 
-    public interface ISignalR
-    {
-        Task<ICommunicationHub> Connect<THub>(IMobileServiceClient mobileService);
-    }
+        protected override void CompleteStartup()
+        {
+            base.CompleteStartup();
 
-    public interface ICommunicationHub:IDisposable
-    {
-        string ConnectionId { get; }
-
-        IDisposable Register<TMessageType>(string eventName, Action<TMessageType> handler);
+            ConfigurationInitializer.Initialize();
+        }
     }
 }

@@ -34,9 +34,11 @@ namespace RealEstateInspector.XForms.Droid
         public async void Authenticate(object sender, EventArgs e)
         {
             var page = sender as RealEstateInspector.XForms.MainPage;
+            await (page.BindingContext as MainViewModel).DataService.Initialize();
+
             var token = await AuthenticationHelper.Authenticate(this);
             Debug.WriteLine(token);
-            await (page.BindingContext as MainViewModel).DataService.Initialize(token);
+            await (page.BindingContext as MainViewModel).DataService.LoginAsync(token);
             await (page.BindingContext as MainViewModel).LoadPropertyData();
         }
     }

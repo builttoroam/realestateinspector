@@ -40,7 +40,8 @@ namespace RealEstateInspector.Desktop.Pages
 
             var token = await AuthenticationHelper.Authenticate(window.Handle);
 
-            await CurrentViewModel.DataService.Initialize(token);
+            await CurrentViewModel.DataService.Initialize();
+            await CurrentViewModel.SyncService.DataService.LoginAsync(token);
 
             await CurrentViewModel.LoadPropertyData();
         }

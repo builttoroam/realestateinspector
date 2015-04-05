@@ -28,6 +28,7 @@
       <DependentUpon>SecondPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UniversalUIContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WindowsPlatformNavigationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)SecondPage.xaml">

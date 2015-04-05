@@ -39,7 +39,7 @@ namespace BuiltToRoam.Synchronization
 
         public async Task Cancel(bool waitForSynchronizationToComplete = false)
         {
-            var syncTask = TaskEx.Run(() => BackgroundThreadCancel());
+            var syncTask = Task.Run(() => BackgroundThreadCancel());
             if (waitForSynchronizationToComplete)
             {
                 await syncTask;
@@ -87,7 +87,7 @@ namespace BuiltToRoam.Synchronization
                     }
                 }
                 // Force the actual sync to a background thread to avoid blocking any UI
-                await TaskEx.Run(() => BackgroundThreadSync(stagesToSynchronize));
+                await Task.Run(() => BackgroundThreadSync(stagesToSynchronize));
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace BuiltToRoam.Synchronization
             }
         }
 
-        private async Task BackgroundThreadCancel()
+        private void BackgroundThreadCancel()
         {
             try
             {

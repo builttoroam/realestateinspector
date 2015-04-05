@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using BuiltToRoam;
+using Microsoft.Practices.ServiceLocation;
 using RealEstateInspector.Core.ViewModels;
 using RealEstateInspector.Shared.Entities;
 #if !SILVERLIGHT
@@ -42,21 +44,25 @@ UIKit.UIViewController caller
         {
             try
             {
+                var cm =
+                    ServiceLocator.Current.GetInstance<IConfigurationManager<BuildConfigurationType, AppConfiguration>>();
+                var config = cm.Current;
 
-                var authContext = new AuthenticationContext(Configuration.Current.ADAuthority);
+
+                var authContext = new AuthenticationContext(config.ADAuthority);
 
                 var tokens = authContext.Tokens();
                 var existing = (from t in tokens
-                                where t.ClientId == Configuration.Current.ADNativeClientApplicationClientId &&
-                                      t.Resource == Configuration.Current.MobileServiceAppIdUri
+                                where t.ClientId == config.ADNativeClientApplicationClientId &&
+                                      t.Resource == config.MobileServiceAppIdUri
                                 select t).FirstOrDefault();
                 if (existing != null)
                 {
                     try
                     {
                         var res = await authContext.AcquireTokenSilentAsync(
-                            Configuration.Current.MobileServiceAppIdUri,
-                            Configuration.Current.ADNativeClientApplicationClientId);
+                            config.MobileServiceAppIdUri,
+                            config.ADNativeClientApplicationClientId);
                         if (res != null && !string.IsNullOrWhiteSpace(res.AccessToken))
                         {
                             return res.AccessToken;
@@ -71,7 +77,7 @@ UIKit.UIViewController caller
                     {
                         var res = await
                             authContext.AcquireTokenByRefreshTokenAsync(existing.RefreshToken,
-                                Configuration.Current.ADNativeClientApplicationClientId);
+                                config.ADNativeClientApplicationClientId);
                         if (res != null && !string.IsNullOrWhiteSpace(res.AccessToken))
                         {
                             return res.AccessToken;
@@ -90,9 +96,9 @@ UIKit.UIViewController caller
 
                 var authResult =
                     await
-                        authContext.AcquireTokenAsync(Configuration.Current.MobileServiceAppIdUri,
-                        Configuration.Current.ADNativeClientApplicationClientId,
-                        new Uri(Configuration.Current.ADRedirectUri),
+                        authContext.AcquireTokenAsync(config.MobileServiceAppIdUri,
+                        config.ADNativeClientApplicationClientId,
+                        new Uri(config.ADRedirectUri),
 #if WINDOWS_PHONE_APP || SILVERLIGHT 
                         new AuthorizationParameters()
 #elif DROID || __IOS__
